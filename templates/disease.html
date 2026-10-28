@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CardioMonitor - Cardiovascular Disease Reference Guide</title>
+  
+  <!-- Modern Clinical Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Bootstrap 4 JS for carousel functionality -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  
+  <!-- Clinical Design System -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/clinical.css') }}">
+  
+  <style>
+    .guide-card {
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 2.2rem;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 2rem;
+    }
+    
+    .guide-section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--color-primary-light);
+    }
+    
+    .guide-section-header h2 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin: 0;
+    }
+    
+    .guide-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+      margin-top: 1rem;
+    }
+    
+    @media (max-width: 768px) {
+      .guide-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .sub-card {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 1.25rem 1.4rem;
+    }
+    
+    .sub-card h4 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--color-primary-dark);
+      margin: 0 0 0.5rem 0;
+    }
+    
+    .sub-card p {
+      font-size: 0.9rem;
+      color: var(--text-main);
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    .carousel-inner img {
+      max-height: 440px;
+      object-fit: cover;
+      border-radius: var(--radius-lg);
+    }
+    
+    .carousel {
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 2.5rem;
+      border: 1px solid var(--border-light);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="clinical-navbar">
+    <div class="container">
+      <a class="clinical-brand" href="{{ url_for('home') }}">
+        <div class="brand-icon-wrapper">
+          <i class="fa-solid fa-heart-pulse"></i>
+        </div>
+        <span>CardioMonitor</span>
+        <span class="clinical-brand-badge">Clinical Platform</span>
+      </a>
+      
+      <ul class="clinical-nav-links">
+        <li>
+          <a class="clinical-nav-link" href="{{ url_for('home') }}">
+            <i class="fa-solid fa-calculator"></i> Risk Assessment
+          </a>
+        </li>
+        <li>
+          <a class="clinical-nav-link active" href="{{ url_for('about') }}">
+            <i class="fa-solid fa-book-medical"></i> Reference Guide
+          </a>
+        </li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="clinical-container">
+    
+    <!-- Hero / Header -->
+    <div class="clinical-hero">
+      <h1 class="clinical-title">Cardiovascular Disease Reference Guide</h1>
+      <p class="clinical-subtitle">
+        Clinical overview of ischemic heart diseases, etiologies, cardiac arrhythmia patterns, symptomatic presentations, and evidence-based preventative strategies.
+      </p>
+    </div>
+
+    <!-- Educational Carousel -->
+    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+      <ol class="carousel-indicators">
+        <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+        <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+        <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+        <li data-target="#carouselExampleIndicators" data-slide-to="3"></li>
+        <li data-target="#carouselExampleIndicators" data-slide-to="4"></li>
+      </ol>
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <img src="{{ url_for('static', filename='corousal/img2.png') }}" class="d-block w-100" alt="Cardiovascular health overview">
+        </div>
+        <div class="carousel-item">
+          <img src="{{ url_for('static', filename='corousal/img3.png') }}" class="d-block w-100" alt="Heart physiology and risk">
+        </div>
+        <div class="carousel-item">
+          <img src="{{ url_for('static', filename='corousal/img4.png') }}" class="d-block w-100" alt="Ischemic heart disease symptoms">
+        </div>
+        <div class="carousel-item">
+          <img src="{{ url_for('static', filename='corousal/img5.png') }}" class="d-block w-100" alt="Diagnostic screening">
+        </div>
+        <div class="carousel-item">
+          <img src="{{ url_for('static', filename='corousal/img6.png') }}" class="d-block w-100" alt="Cardiac prevention roadmap">
+        </div>
+      </div>
+      <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+    </div>
+
+    <!-- Section 1: Overview -->
+    <div class="guide-card">
+      <div class="guide-section-header">
+        <i class="fa-solid fa-notes-medical" style="color: var(--color-primary); font-size: 1.4rem;"></i>
+        <h2>Epidemiology & Overview</h2>
+      </div>
+      <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-main);">
+        Heart disease encompasses diverse pathophysiological conditions impairing myocardial structure and function. According to the Centers for Disease Control and Prevention (CDC), cardiovascular disease remains the primary cause of mortality globally, accounting for approximately 1 in every 4 deaths. Early detection of subclinical ischemia and aggressive management of modifiable risk factors drastically mitigate coronary events.
+      </p>
+    </div>
+
+    <!-- Section 2: Clinical Types of Heart Disease -->
+    <div class="guide-card">
+      <div class="guide-section-header">
+        <i class="fa-solid fa-stethoscope" style="color: var(--color-primary); font-size: 1.4rem;"></i>
+        <h2>Major Clinical Classifications</h2>
+      </div>
+      
+      <div class="guide-grid">
+        <div class="sub-card">
+          <h4>Coronary Artery Disease (CAD)</h4>
+          <p>Atherosclerotic plaque accumulation within the epicardial coronary arteries reduces luminal diameter, restricting oxygen delivery to the myocardium and provoking stable angina or acute coronary syndrome.</p>
+        </div>
+
+        <div class="sub-card">
+          <h4>Cardiac Arrhythmias</h4>
+          <p>Disruptions in cardiac electrical conduction producing tachycardia, bradycardia, premature ventricular beats, or atrial fibrillation that impair cardiac output efficiency.</p>
+        </div>
+
+        <div class="sub-card">
+          <h4>Myocardial Infarction (Heart Attack)</h4>
+          <p>Acute thrombus occlusion following unstable atherosclerotic plaque rupture, resulting in transmural or subendocardial cardiomyocyte necrosis.</p>
+        </div>
+
+        <div class="sub-card">
+          <h4>Heart Failure (HF)</h4>
+          <p>Progressive inability of the ventricles to fill or eject adequate volume to meet metabolic demands, often culminating from unmanaged chronic hypertension, ischemia, or cardiomyopathy.</p>
+        </div>
+
+        <div class="sub-card">
+          <h4>Cardiomyopathy</h4>
+          <p>Primary myocardial structural disease, including dilated cardiomyopathy (ventricular dilation and thinning) and hypertrophic cardiomyopathy (genetic sarcomeric wall thickening).</p>
+        </div>
+
+        <div class="sub-card">
+          <h4>Valvular Heart Disease</h4>
+          <p>Stenosis, regurgitation, or prolapse affecting aortic, mitral, tricuspid, or pulmonary valves, leading to hemodynamic strain and chamber remodeling.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: Symptom Presentation -->
+    <div class="guide-card">
+      <div class="guide-section-header">
+        <i class="fa-solid fa-triangle-exclamation" style="color: var(--color-warning); font-size: 1.4rem;"></i>
+        <h2>Symptom Recognition Spectrum</h2>
+      </div>
+      
+      <div class="guide-grid">
+        <div class="sub-card">
+          <h4>Vascular & Anginal Signs</h4>
+          <p>Substernal chest pressure, tightness, radiating discomfort to left arm, neck, or jaw; exertional dyspnea, unexplained diaphoresis, or epigastric discomfort.</p>
+        </div>
+
+        <div class="sub-card">
+          <h4>Arrhythmic Signs</h4>
+          <p>Palpitations, sensation of skipped beats, sudden presyncope, dizziness, or lightheadedness occurring with or without exertional triggers.</p>
+        </div>
+
+        <div class="sub-card">
+          <h4>Congestive Failure Signs</h4>
+          <p>Orthopnea, paroxysmal nocturnal dyspnea, bilateral peripheral pedal edema, rapid fluid weight gain, and profound exertional fatigue.</p>
+        </div>
+
+        <div class="sub-card" style="border-left: 4px solid var(--color-danger); background: var(--color-danger-bg);">
+          <h4 style="color: var(--color-danger);">Emergency Warning Signs</h4>
+          <p style="color: var(--color-danger);">Immediate 911/emergency evaluation is mandatory for crushing retrosternal chest pain exceeding 5 minutes, acute syncope, or severe resting respiratory distress.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 4: Risk Factors & Prevention -->
+    <div class="guide-card">
+      <div class="guide-section-header">
+        <i class="fa-solid fa-shield-heart" style="color: var(--color-teal); font-size: 1.4rem;"></i>
+        <h2>Evidence-Based Risk Reduction</h2>
+      </div>
+      
+      <p style="font-size: 0.93rem; color: var(--text-muted); margin-bottom: 1rem;">
+        Key modifiable lifestyle factors identified by the American Heart Association (AHA Life's Essential 8):
+      </p>
+      
+      <div class="guide-grid">
+        <div class="sub-card">
+          <h4>Blood Pressure Optimization</h4>
+          <p>Target resting systolic &lt; 120 mm Hg and diastolic &lt; 80 mm Hg through sodium restriction, exercise, and targeted pharmacotherapy.</p>
+        </div>
+
+        <div class="sub-card">
+          <h4>Lipid Profile Management</h4>
+          <p>Maintain optimal LDL-C (&lt; 100 mg/dL or &lt; 70 mg/dL in high risk), non-HDL cholesterol, and triglycerides via diet and lipid-lowering agents.</p>
+        </div>
+
+        <div class="sub-card">
+          <h4>Glycemic Control</h4>
+          <p>Control fasting blood glucose &lt; 100 mg/dL and HbA1c &lt; 5.7% to avert diabetic micro- and macrovascular endothelial injury.</p>
+        </div>
+
+        <div class="sub-card">
+          <h4>Aerobic Physical Activity</h4>
+          <p>Engage in at least 150 minutes of moderate-intensity or 75 minutes of vigorous-intensity cardiovascular exercise per week.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom CTA Banner -->
+    <div style="background: linear-gradient(135deg, #075985, #0369a1); border-radius: var(--radius-lg); padding: 2.2rem; color: #ffffff; text-align: center; margin-top: 1.5rem;">
+      <h3 style="font-weight: 800; font-size: 1.4rem; margin: 0 0 0.5rem 0;">Ready to assess your clinical risk?</h3>
+      <p style="max-width: 600px; margin: 0 auto 1.5rem auto; font-size: 0.95rem; opacity: 0.9;">
+        Run the multi-parametric machine learning classifier using individual clinical vitals and stress test results.
+      </p>
+      <a href="{{ url_for('home') }}" class="btn-predict" style="background: #ffffff; color: var(--color-primary-dark); max-width: 280px; margin: 0 auto; box-shadow: var(--shadow-md);">
+        <i class="fa-solid fa-calculator"></i>
+        <span>Go to Risk Assessment</span>
+      </a>
+    </div>
+
+  </main>
+
+  <!-- Clinical Footer -->
+  <footer class="clinical-footer">
+    <div class="clinical-footer-content">
+      <p style="margin: 0; font-weight: 500;">
+        CardioMonitor &copy; 2026 &bull; Advanced Machine Learning Cardiovascular Risk Stratification System
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>

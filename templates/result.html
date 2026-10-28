@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CardioMonitor - Assessment Report for {{ nameofpatient }}</title>
+  
+  <!-- Modern Clinical Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Clinical Design System -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/clinical.css') }}">
+  
+  <style>
+    .patient-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background: var(--color-primary-light);
+      color: var(--color-primary-active);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+    
+    .status-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      margin-left: 8px;
+    }
+    
+    .chip-low {
+      background: var(--color-success-bg);
+      color: var(--color-success);
+      border: 1px solid var(--color-success-border);
+    }
+    
+    .chip-high {
+      background: var(--color-danger-bg);
+      color: var(--color-danger);
+      border: 1px solid var(--color-danger-border);
+    }
+
+    @media print {
+      .clinical-navbar, .results-actions, .clinical-footer {
+        display: none !important;
+      }
+      .clinical-container {
+        margin: 0;
+        max-width: 100%;
+        padding: 0;
+      }
+      .results-card {
+        box-shadow: none;
+        border: 1px solid #ccc;
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="clinical-navbar">
+    <div class="container">
+      <a class="clinical-brand" href="{{ url_for('home') }}">
+        <div class="brand-icon-wrapper">
+          <i class="fa-solid fa-heart-pulse"></i>
+        </div>
+        <span>CardioMonitor</span>
+        <span class="clinical-brand-badge">Clinical Platform</span>
+      </a>
+      
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <div class="telemetry-chip" id="counter" title="Model telemetry metrics">
+          <span class="pulse-indicator"></span>
+          <span>Batch: {{ model_counter }} &bull; Session: {{ total_counter }}</span>
+        </div>
+        
+        <ul class="clinical-nav-links">
+          <li>
+            <a class="clinical-nav-link" href="{{ url_for('home') }}">
+              <i class="fa-solid fa-arrow-left"></i> New Assessment
+            </a>
+          </li>
+          <li>
+            <a class="clinical-nav-link" href="{{ url_for('about') }}">
+              <i class="fa-solid fa-book-medical"></i> Reference Guide
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="clinical-container">
+    
+    <div class="results-card">
+      
+      <!-- Patient Information Bar -->
+      <div class="patient-badge-bar">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div class="patient-avatar">
+            <i class="fa-solid fa-user-check"></i>
+          </div>
+          <div>
+            <h2 class="patient-title">
+              {{ nameofpatient }}
+              {% if prediction == 1 %}
+              <span class="status-chip chip-low"><i class="fa-solid fa-circle-check"></i> Low Risk</span>
+              {% elif prediction == 0 %}
+              <span class="status-chip chip-high"><i class="fa-solid fa-triangle-exclamation"></i> Elevated Risk</span>
+              {% endif %}
+            </h2>
+            <span class="patient-meta">
+              Diagnostic Session ID: CM-{{ model_counter }}-{{ total_counter }} &bull; Verified Classification
+            </span>
+          </div>
+        </div>
+        
+        <div>
+          <button onclick="window.print()" class="btn-secondary-action" title="Print this diagnostic report">
+            <i class="fa-solid fa-print"></i> Print Summary
+          </button>
+        </div>
+      </div>
+
+      <!-- Primary Risk Assessment Result -->
+      {% if prediction == 1 %}
+      <div class="prediction-banner risk-low" role="status">
+        <div class="risk-icon-wrapper">
+          <i class="fa-solid fa-heart-circle-check"></i>
+        </div>
+        <div class="risk-body">
+          <h3>Favorable Clinical Profile: Low Risk Detected</h3>
+          <p>
+            Based on the submitted physiological and diagnostic metrics, the algorithmic model indicates a <strong>very low probability of coronary artery disease</strong>. The patient's reported cardiac parameters are broadly consistent with baseline cardiovascular health.
+          </p>
+          <div style="margin-top: 0.85rem; font-size: 0.88rem; color: var(--color-success); font-weight: 500;">
+            <i class="fa-solid fa-circle-check"></i> Recommended: Maintain routine physical exercise, balanced Mediterranean nutrition, and standard scheduled preventative checkups.
+          </div>
+        </div>
+      </div>
+      {% elif prediction == 0 %}
+      <div class="prediction-banner risk-high" role="status">
+        <div class="risk-icon-wrapper">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <div class="risk-body">
+          <h3>Clinical Attention: Elevated Cardiovascular Risk Detected</h3>
+          <p>
+            The analysis identifies diagnostic patterns associated with a <strong>high risk of cardiovascular disease or ischemic distress</strong>. Multiple submitted parameters diverge from baseline ranges.
+          </p>
+          <div style="margin-top: 0.85rem; font-size: 0.88rem; color: var(--color-danger); font-weight: 600;">
+            <i class="fa-solid fa-stethoscope"></i> Recommended Action: Schedule a comprehensive clinical consultation with a qualified cardiologist for confirmatory diagnostic testing (stress echocardiography, coronary angiogram).
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Analytical Diagnostic Charts -->
+      <div style="margin-top: 2rem;">
+        <h3 class="analytics-section-title">
+          <i class="fa-solid fa-chart-simple" style="color: var(--color-primary);"></i>
+          Comparative Diagnostic Analytics
+        </h3>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: -0.25rem; margin-bottom: 1.5rem;">
+          Graphical comparison of patient values (red) against normative reference values (green) for defining cardiovascular attributes.
+        </p>
+
+        <div class="analytics-grid">
+          <!-- Chart 1 -->
+          <div class="chart-card">
+            <h4>Multivariate Risk Attribute Profile</h4>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0 0 0.75rem 0;">
+              Attributes: Chest Pain, Serum Cholesterol, Fasting Glucose, Exercise Angina, ST Depression, Slope, Vessels, and Thallium
+            </p>
+            <img src="{{ url_for('static', filename='plotng.png') }}" alt="Cardiovascular Multi-attribute Diagnostic Chart">
+          </div>
+
+          <!-- Chart 2 -->
+          <div class="chart-card">
+            <h4>Hemodynamics & Vital Signs Comparison</h4>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0 0 0.75rem 0;">
+              Metrics: Resting Blood Pressure (trestbps), Serum Cholesterol (chol), and Maximum Achieved Heart Rate (thalach)
+            </p>
+            <img src="{{ url_for('static', filename='plotng2.png') }}" alt="Hemodynamic Vital Parameters Comparison Chart">
+          </div>
+        </div>
+      </div>
+
+      <!-- Medical Advisory Disclaimer -->
+      <div class="clinical-disclaimer-box">
+        <i class="fa-solid fa-circle-info" style="color: var(--color-primary); margin-right: 6px;"></i>
+        <strong>Clinical Advisory Notice:</strong>
+        This automated evaluation is intended solely for clinical risk stratification and informational screening assistance. It does not constitute formal medical diagnosis, prognosis, or prescriptive therapy. If symptoms such as acute chest pressure, dyspnea, or palpitation occur, seek immediate medical attention.
+      </div>
+
+      <!-- Action Navigation Toolbar -->
+      <div class="results-actions">
+        <a href="{{ url_for('home') }}" class="btn-predict" style="max-width: 260px; height: 46px; font-size: 0.95rem;">
+          <i class="fa-solid fa-rotate-right"></i>
+          <span>Perform New Assessment</span>
+        </a>
+        <a href="{{ url_for('about') }}" class="btn-secondary-action">
+          <i class="fa-solid fa-book-medical"></i>
+          <span>Read Disease Guide</span>
+        </a>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Clinical Footer -->
+  <footer class="clinical-footer">
+    <div class="clinical-footer-content">
+      <p style="margin: 0; font-weight: 500;">
+        CardioMonitor &copy; 2026 &bull; Advanced Machine Learning Cardiovascular Risk Stratification System
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>

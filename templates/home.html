@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CardioMonitor - Cardiovascular Risk Assessment Platform</title>
+  
+  <!-- Modern Clinical Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Clinical Design System -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/clinical.css') }}">
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="clinical-navbar">
+    <div class="container">
+      <a class="clinical-brand" href="{{ url_for('home') }}">
+        <div class="brand-icon-wrapper">
+          <i class="fa-solid fa-heart-pulse"></i>
+        </div>
+        <span>CardioMonitor</span>
+        <span class="clinical-brand-badge">Clinical Platform</span>
+      </a>
+      
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <div class="telemetry-chip" id="counter" title="Total patient assessments performed">
+          <span class="pulse-indicator"></span>
+          <span>Assessments: {{ all_count }}</span>
+        </div>
+        
+        <ul class="clinical-nav-links">
+          <li>
+            <a class="clinical-nav-link active" href="{{ url_for('home') }}">
+              <i class="fa-solid fa-calculator"></i> Assessment
+            </a>
+          </li>
+          <li>
+            <a class="clinical-nav-link" href="{{ url_for('about') }}">
+              <i class="fa-solid fa-book-medical"></i> Reference Guide
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="clinical-container">
+    
+    <!-- Hero / Header -->
+    <div class="clinical-hero">
+      <div class="hero-meta-pill">
+        <i class="fa-solid fa-brain"></i> Machine Learning Diagnostic Classification
+      </div>
+      <h1 class="clinical-title">Cardiovascular Risk Stratification</h1>
+      <p class="clinical-subtitle">
+        Enter patient physiological parameters below to evaluate coronary ischemic disease probability using algorithmic pattern classification.
+      </p>
+      
+      <div class="hero-highlights-strip">
+        <div class="highlight-item">
+          <i class="fa-solid fa-microscope"></i>
+          <span>13 Multi-parametric Features</span>
+        </div>
+        <div class="highlight-item">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>Standardized Population Normalization</span>
+        </div>
+        <div class="highlight-item">
+          <i class="fa-solid fa-user-shield"></i>
+          <span>Confidential Clinical Screening</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Alert Notification -->
+    {% if error_msg %}
+    <div class="clinical-alert clinical-alert-danger" role="alert">
+      <i class="fa-solid fa-circle-exclamation" style="font-size: 1.3rem; margin-top: 2px;"></i>
+      <div>
+        <strong>Validation Notice:</strong> {{ error_msg }}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Prediction Form -->
+    <form action="{{ url_for('predict') }}" method="post" id="prediction-form" novalidate>
+      
+      <!-- Section 1: Demographics -->
+      <div class="form-section-card">
+        <div class="section-legend">
+          <div class="section-num-badge">01</div>
+          <div>
+            <h3>Patient Profile & Demographics</h3>
+            <p>Baseline biographical parameters for physiological normalization</p>
+          </div>
+        </div>
+        
+        <div class="clinical-form-grid">
+          <!-- Patient Name -->
+          <div class="field-group">
+            <label class="field-label" for="input-name">
+              <span>Patient Name / ID</span>
+            </label>
+            <span class="field-help">Full name or patient identifier for clinical report</span>
+            <input 
+              class="clinical-input" 
+              type="text" 
+              id="input-name" 
+              name="name" 
+              placeholder="e.g. Eleanor Vance" 
+              value="{{ form_data.get('name', '') if form_data else '' }}" 
+              required
+            >
+          </div>
+
+          <!-- Age -->
+          <div class="field-group">
+            <label class="field-label" for="input-age">
+              <span>Patient Age</span>
+              <span class="field-unit">Years</span>
+            </label>
+            <span class="field-help">Biological age in completed years (1–120)</span>
+            <input 
+              class="clinical-input" 
+              type="number" 
+              id="input-age" 
+              name="age" 
+              min="1" 
+              max="120" 
+              placeholder="e.g. 54" 
+              value="{{ form_data.get('age', '') if form_data else '' }}" 
+              required
+            >
+          </div>
+
+          <!-- Biological Sex -->
+          <div class="field-group">
+            <label class="field-label" for="cuisine">
+              <span>Biological Sex</span>
+            </label>
+            <span class="field-help">Phenotypic sex for cardiovascular risk stratification</span>
+            <select class="clinical-select" id="cuisine" name="sex" required>
+              <option value="" {% if not form_data or form_data.get('sex') in ['', 'none'] %}selected{% endif %}>Select Biological Sex</option>
+              <option value="Male" {% if form_data and form_data.get('sex') == 'Male' %}selected{% endif %}>Male</option>
+              <option value="Female" {% if form_data and form_data.get('sex') == 'Female' %}selected{% endif %}>Female</option>
+            </select>
+          </div>
+
+          <!-- Chest Pain Type -->
+          <div class="field-group">
+            <label class="field-label" for="input-cp">
+              <span>Chest Pain Presentation (cp)</span>
+            </label>
+            <span class="field-help">Symptomatic classification of reported angina</span>
+            <select class="clinical-select" id="input-cp" name="cp" required>
+              <option value="" {% if not form_data or form_data.get('cp') in ['', 'none'] %}selected{% endif %}>Select Chest Pain Category</option>
+              <option value="Typical angina" {% if form_data and form_data.get('cp') == 'Typical angina' %}selected{% endif %}>Typical Angina</option>
+              <option value="Atypical angina" {% if form_data and form_data.get('cp') == 'Atypical angina' %}selected{% endif %}>Atypical Angina</option>
+              <option value="Non-anginal pain" {% if form_data and form_data.get('cp') == 'Non-anginal pain' %}selected{% endif %}>Non-anginal Pain</option>
+              <option value="Asymptomatic" {% if form_data and form_data.get('cp') == 'Asymptomatic' %}selected{% endif %}>Asymptomatic</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Resting Hemodynamics & Metabolism -->
+      <div class="form-section-card">
+        <div class="section-legend">
+          <div class="section-num-badge">02</div>
+          <div>
+            <h3>Resting Hemodynamics & Metabolism</h3>
+            <p>Arterial blood pressure, serum lipid concentration, and fasting glucose</p>
+          </div>
+        </div>
+        
+        <div class="clinical-form-grid">
+          <!-- Resting Blood Pressure -->
+          <div class="field-group">
+            <label class="field-label" for="input-trestbps">
+              <span>Resting Blood Pressure (trestbps)</span>
+              <span class="field-unit">mm Hg</span>
+            </label>
+            <span class="field-help">Systolic arterial blood pressure on admission</span>
+            <input 
+              class="clinical-input" 
+              type="number" 
+              id="input-trestbps" 
+              name="trestbps" 
+              min="50" 
+              max="300" 
+              placeholder="e.g. 130" 
+              value="{{ form_data.get('trestbps', '') if form_data else '' }}" 
+              required
+            >
+          </div>
+
+          <!-- Serum Cholesterol -->
+          <div class="field-group">
+            <label class="field-label" for="input-chol">
+              <span>Serum Cholesterol (chol)</span>
+              <span class="field-unit">mg/dL</span>
+            </label>
+            <span class="field-help">Total serum lipid concentration</span>
+            <input 
+              class="clinical-input" 
+              type="number" 
+              id="input-chol" 
+              name="chol" 
+              min="50" 
+              max="800" 
+              placeholder="e.g. 240" 
+              value="{{ form_data.get('chol', '') if form_data else '' }}" 
+              required
+            >
+          </div>
+
+          <!-- Fasting Blood Sugar -->
+          <div class="field-group">
+            <label class="field-label" for="input-fbs">
+              <span>Fasting Blood Sugar &gt; 120 mg/dL (fbs)</span>
+            </label>
+            <span class="field-help">Glycemic elevation above diabetic threshold</span>
+            <select class="clinical-select" id="input-fbs" name="fbs" required>
+              <option value="" {% if not form_data or form_data.get('fbs') in ['', 'none'] %}selected{% endif %}>Select Fasting Glucose Status</option>
+              <option value="Yes" {% if form_data and form_data.get('fbs') == 'Yes' %}selected{% endif %}>Yes (&gt; 120 mg/dL)</option>
+              <option value="No" {% if form_data and form_data.get('fbs') == 'No' %}selected{% endif %}>No (&le; 120 mg/dL)</option>
+            </select>
+          </div>
+
+          <!-- Resting ECG -->
+          <div class="field-group">
+            <label class="field-label" for="input-restecg">
+              <span>Resting Electrocardiogram (restecg)</span>
+            </label>
+            <span class="field-help">Baseline resting ECG wave morphology</span>
+            <select class="clinical-select" id="input-restecg" name="restecg" required>
+              <option value="" {% if not form_data or form_data.get('restecg') in ['', 'none'] %}selected{% endif %}>Select Resting ECG Finding</option>
+              <option value="Nothing to note" {% if form_data and form_data.get('restecg') == 'Nothing to note' %}selected{% endif %}>Normal / Nothing to note</option>
+              <option value="ST-T Wave abnormality" {% if form_data and form_data.get('restecg') == 'ST-T Wave abnormality' %}selected{% endif %}>ST-T Wave Abnormality</option>
+              <option value="Possible or definite left ventricular hypertrophy" {% if form_data and 'hypertrophy' in form_data.get('restecg', '') %}selected{% endif %}>Left Ventricular Hypertrophy (Estes' criteria)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Exercise Stress Test Performance -->
+      <div class="form-section-card">
+        <div class="section-legend">
+          <div class="section-num-badge">03</div>
+          <div>
+            <h3>Exercise Stress Test Performance</h3>
+            <p>Cardiac workload response and ischemia signs during physical stress</p>
+          </div>
+        </div>
+        
+        <div class="clinical-form-grid">
+          <!-- Maximum Heart Rate -->
+          <div class="field-group">
+            <label class="field-label" for="input-thalach">
+              <span>Max Heart Rate Achieved (thalach)</span>
+              <span class="field-unit">bpm</span>
+            </label>
+            <span class="field-help">Peak heart rate recorded during exercise</span>
+            <input 
+              class="clinical-input" 
+              type="number" 
+              id="input-thalach" 
+              name="thalach" 
+              min="50" 
+              max="300" 
+              placeholder="e.g. 155" 
+              value="{{ form_data.get('thalach', '') if form_data else '' }}" 
+              required
+            >
+          </div>
+
+          <!-- Exercise Induced Angina -->
+          <div class="field-group">
+            <label class="field-label" for="input-exang">
+              <span>Exercise-Induced Angina (exang)</span>
+            </label>
+            <span class="field-help">Ischemic chest discomfort triggered by exertion</span>
+            <select class="clinical-select" id="input-exang" name="exang" required>
+              <option value="" {% if not form_data or form_data.get('exang') in ['', 'none'] %}selected{% endif %}>Select Angina Presence</option>
+              <option value="Yes" {% if form_data and form_data.get('exang') == 'Yes' %}selected{% endif %}>Yes (Exertional Angina Present)</option>
+              <option value="No" {% if form_data and form_data.get('exang') == 'No' %}selected{% endif %}>No (No Exertional Angina)</option>
+            </select>
+          </div>
+
+          <!-- ST Depression (Oldpeak) -->
+          <div class="field-group">
+            <label class="field-label" for="input-oldpeak">
+              <span>ST Depression (oldpeak)</span>
+              <span class="field-unit">mm</span>
+            </label>
+            <span class="field-help">ST depression induced by exercise relative to rest (0.0 to 15.0)</span>
+            <input 
+              class="clinical-input" 
+              type="number" 
+              step="any" 
+              id="input-oldpeak" 
+              name="oldpeak" 
+              min="0" 
+              max="15" 
+              placeholder="e.g. 1.4 (or 0 for normal)" 
+              value="{{ form_data.get('oldpeak', '') if form_data else '' }}" 
+              required
+            >
+          </div>
+
+          <!-- ST Slope -->
+          <div class="field-group">
+            <label class="field-label" for="input-slope">
+              <span>Peak Exercise ST Slope (slope)</span>
+            </label>
+            <span class="field-help">Slope trajectory of the ST segment at peak exercise</span>
+            <select class="clinical-select" id="input-slope" name="slope" required>
+              <option value="" {% if not form_data or form_data.get('slope') in ['', 'none'] %}selected{% endif %}>Select ST Slope Trajectory</option>
+              <option value="Upsloping: better heart rate with excercise(uncommon)" {% if form_data and 'Upsloping' in form_data.get('slope', '') %}selected{% endif %}>Upsloping (Rapid acceleration / low ischemia risk)</option>
+              <option value="Flatsloping: minimal change(typical healthy heart)" {% if form_data and 'Flatsloping' in form_data.get('slope', '') %}selected{% endif %}>Flatsloping (Horizontal minimal variation)</option>
+              <option value="Downsloping: signs of unhealthy heart" {% if form_data and 'Downsloping' in form_data.get('slope', '') %}selected{% endif %}>Downsloping (Signs of myocardial ischemia)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4: Advanced Diagnostic Findings -->
+      <div class="form-section-card">
+        <div class="section-legend">
+          <div class="section-num-badge">04</div>
+          <div>
+            <h3>Advanced Diagnostic Imaging</h3>
+            <p>Fluoroscopic vessel opacification and nuclear myocardial perfusion</p>
+          </div>
+        </div>
+        
+        <div class="clinical-form-grid">
+          <!-- Major Vessels -->
+          <div class="field-group">
+            <label class="field-label" for="input-ca">
+              <span>Major Vessels Colored by Fluoroscopy (ca)</span>
+              <span class="field-unit">0 - 3</span>
+            </label>
+            <span class="field-help">Number of coronary vessels visualized without critical obstruction (0 to 3)</span>
+            <input 
+              class="clinical-input" 
+              type="number" 
+              id="input-ca" 
+              name="ca" 
+              min="0" 
+              max="3" 
+              placeholder="e.g. 0" 
+              value="{{ form_data.get('ca', '') if form_data else '' }}" 
+              required
+            >
+          </div>
+
+          <!-- Thallium Stress Defect -->
+          <div class="field-group">
+            <label class="field-label" for="input-thal">
+              <span>Thallium Perfusion Scintigraphy (thal)</span>
+            </label>
+            <span class="field-help">Nuclear myocardial perfusion imaging result</span>
+            <select class="clinical-select" id="input-thal" name="thal" required>
+              <option value="" {% if not form_data or form_data.get('thal') in ['', 'none'] %}selected{% endif %}>Select Thallium Scintigraphy Finding</option>
+              <option value="normal" {% if form_data and form_data.get('thal') == 'normal' %}selected{% endif %}>Normal Perfusion</option>
+              <option value="fixed defect: used to be defect but ok now" {% if form_data and 'fixed' in form_data.get('thal', '') %}selected{% endif %}>Fixed Defect (Prior infarct tissue)</option>
+              <option value="reversable defect: no proper blood movement when excercising" {% if form_data and 'reversable' in form_data.get('thal', '') %}selected{% endif %}>Reversible Defect (Active exertional ischemia)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submission Area -->
+      <div class="form-actions">
+        <button type="submit" class="btn-predict" id="predict-btn">
+          <i class="fa-solid fa-heart-pulse"></i>
+          <span>Evaluate Cardiovascular Risk</span>
+        </button>
+        <span class="form-disclaimer">
+          <i class="fa-solid fa-shield-halved" style="color: var(--color-teal);"></i>
+          Data is processed confidentially for clinical screening evaluation.
+        </span>
+      </div>
+
+    </form>
+
+  </main>
+
+  <!-- Clinical Footer -->
+  <footer class="clinical-footer">
+    <div class="clinical-footer-content">
+      <p style="margin: 0; font-weight: 500;">
+        CardioMonitor &copy; 2026 &bull; Advanced Machine Learning Cardiovascular Risk Stratification System
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // Micro-interaction: Provide instant visual feedback and prevent duplicate submissions
+    const predForm = document.getElementById('prediction-form');
+    const predBtn = document.getElementById('predict-btn');
+
+    if (predForm && predBtn) {
+      predForm.addEventListener('submit', function(e) {
+        if (this.checkValidity()) {
+          predBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> <span>Evaluating Biomarkers...</span>';
+          predBtn.style.opacity = '0.85';
+          // Prevent multiple clicks while allowing browser form submission to execute
+          setTimeout(function() {
+            predBtn.disabled = true;
+            predBtn.style.cursor = 'not-allowed';
+          }, 20);
+        }
+      });
+
+      // Restore submit button state on page navigation/restore (e.g. Back button or bfcache)
+      window.addEventListener('pageshow', function() {
+        predBtn.disabled = false;
+        predBtn.style.opacity = '1';
+        predBtn.style.cursor = 'pointer';
+        predBtn.innerHTML = '<i class="fa-solid fa-heart-pulse"></i> <span>Evaluate Cardiovascular Risk</span>';
+      });
+    }
+  </script>
+
+</body>
+</html>
